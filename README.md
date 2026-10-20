@@ -60,15 +60,20 @@ hermes gateway restart
 hermes chat -q "Génère une image d'un corgi dans l'espace"
 ```
 
+Le protocole est compatible OpenAI en génération **et** en édition : un seul outil Hermes
+(`image_generate`) couvre les deux — avec images sources il route vers `/v1/images/edits`,
+sans sources vers `/v1/images/generations`.
+
 ## Spécification de l'API
 
-### Endpoint
+### Endpoints
 
-```
-POST /v1/images/generations
-```
+| Endpoint | Méthode | Content-Type | Usage |
+|---|---|---|---|
+| `/v1/images/generations` | POST | `application/json` | texte → image |
+| `/v1/images/edits` | POST | `multipart/form-data` | image → image (édition) |
 
-### Body
+### Body — génération
 
 | Champ | Type | Requis | Défaut |
 |---|---|---|---|
@@ -80,6 +85,30 @@ POST /v1/images/generations
 | `seed` | integer | ❌ | null |
 | `negative_prompt` | string | ❌ | null |
 | `response_format` | string | ❌ | `b64_json` |
+
+### Body — édition (multipart)
+
+| Champ | Type | Requis | Défaut |
+|---|---|---|---|
+| `image` | file | ✅ | — |
+| `image[]` | file[] | ❌ | — |
+| `prompt` | string | ✅ | — |
+| `n` | integer | ❌ | 1 |
+| `size` | string | ❌ | `1024x1024` |
+| `strength` | number | ❌ | 0.75 |
+| `steps` | integer | ❌ | 4 |
+| `guidance_scale` | number | ❌ | 1.0 |
+| `seed` | integer | ❌ | null |
+| `negative_prompt` | string | ❌ | null |
+| `response_format` | string | ❌ | `b64_json` |
+
+### Capabilities déclarées
+
+```python
+{"modalities": ["text", "image"], "max_reference_images": 4}
+```
+
+Hermes expose alors `image_url` / `reference_image_urls` dans le schéma de l'outil.
 
 ### Réponse
 

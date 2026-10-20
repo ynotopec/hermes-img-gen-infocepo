@@ -1,6 +1,6 @@
 name: infocepo-txt2image
-version: "1.0.0"
-description: Image generation via infocepo TXT2IMAGE API (OpenAI-compatible)
+version: "1.1.0"
+description: Image generation and editing via infocepo TXT2IMAGE API (OpenAI-compatible)
 author: ai-agent
 kind: backend
 requires_env:
